@@ -1,0 +1,21 @@
+<h1>Subscription-list works!</h1>
+
+<div *ngFor="let sub of my_subs">
+
+	<div style="padding-left: 20%; padding-right: 20%;">
+		<h2>
+			{{ sub.name }} ${{ sub.price }}
+		</h2>
+	
+		<p style="margin: auto;">
+			Payment day: {{ sub.date_dd }}/{{ sub.date_mm }}/{{ sub.date_yy }}
+		</p>
+	</div>
+	
+	<div style="padding-left: 20%">
+		<p>
+			{{ sub.description }}
+		</p>
+	</div>
+  
+  </div>

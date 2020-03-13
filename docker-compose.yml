@@ -1,0 +1,35 @@
+version: '3'
+services:
+    mongo:
+        image: 'mongo:latest'
+        container_name: 'mongo'
+        ports:
+            - "27017:27017"
+        # volumes:
+        #     - "mongodata:/data/db"
+    operations-api:
+        container_name: 'operations-api'
+        build: './operations api'
+        ports:
+            - '5000:5000'
+        # volumes:
+        #     - './operations api:/go/src/app'
+        depends_on:
+            - 'mongo'
+    # web:
+    #     container_name: 'web'
+    #     image: 'nodejs:latest'
+    #     ports:
+    #         - '8081:80'
+    #     # volumes:
+    #     #     - './web: ?? '
+    #     depends_on:
+    #         - operations-api
+
+# ??????
+# what are volumes and how do I use them?
+# volumes:
+#     mongodata:
+
+# networks:
+#     network1:

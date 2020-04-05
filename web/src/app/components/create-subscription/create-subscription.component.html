@@ -12,7 +12,7 @@
 
     <div *ngIf="showWarning" id="warning">Please fill in required fields</div>
 
-    <div id="button-container">
-      <button id="ok-button" (click)="createAsset()">Create</button>
+    <div id="button-container" mat-dialog-actions>
+      <button id="ok-button" mat-raised-button (click)="createAsset()">Create</button>
     </div>
 </div>

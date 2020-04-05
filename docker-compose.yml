@@ -17,18 +17,18 @@ services:
         #     - './operations api:/go/src/app'
         depends_on:
             - 'mongo'
-    web:
-        container_name: 'web'
-        # image: 'node:12'
-        build: './web'
-        ports:
-            - '8081:80'
-            - '8082:4200'
-        # volumes:
-        #     - './web: ?? '
-        depends_on:
-            - operations-api
-        tty: true
+    # web:
+    #     container_name: 'web'
+    #     # image: 'node:12'
+    #     build: './web'
+    #     ports:
+    #         - '8081:80'
+    #         - '8082:4200'
+    #     # volumes:
+    #     #     - './web: ?? '
+    #     depends_on:
+    #         - operations-api
+    #     tty: true
         # links:
         #     - operations-api
 

@@ -7,7 +7,10 @@ import (
     "net/http"
     "os"
 
-	"gopkg.in/mgo.v2"
+    "gopkg.in/mgo.v2"
+    "gopkg.in/mgo.v2/bson"
+    // "github.com/globalsign/mgo"
+    // "github.com/globalsign/mgo/bson"
     "github.com/rs/cors"
 	"github.com/gorilla/mux"
 )
@@ -21,12 +24,35 @@ const (
 )
 
 type Subscription struct {
+    ID          bson.ObjectId `db:"id" json:"id,omitempty" bson:"_id"`
     Name        string `json:"name"`
     Price       string `json:"price"`
     Details     string `json:"details"`
     Date_d      string `json:"date_d"`
     Date_m      string `json:"date_m"`
     Date_y      string `json:"date_y"`
+}
+
+// type Note struct {
+//     ID primitive.ObjectID `bson:"_id" json:"id,omitempty"`
+//     Title string `json:"title"`
+//     Body string `json:"body"`
+//     CreatedAt time.Time `bson:"created_at" json:"created_at,omitempty"`
+//     UpdatedAt time.Time `bson:"updated_at" json:"updated_at,omitempty"`
+// }
+
+type RhinoJobs struct {
+    ID                bson.ObjectId  `db:"id" json:"id" bson:"_id"`
+    CallDate          string  `db:"call_date" json:"callDate" bson:"callDate"`
+    Time              string  `db:"time" json:"time" bson:"time"`
+    CallType          string  `db:"call_type" json:"callType" bson:"callType"`
+    Position          string  `db:"position" json:"position" bson:"position"`
+    Description       string  `db:"description" json:"description" bson:"description"`
+    Qty               int     `db:"qty" json:"qty" bson:"qty"`
+    EstimatedDuration float64 `db:"estimated_duration" json:"estimatedDuration" bson:"estimatedDuration"`
+    EstimatedOvertime float64 `db:"estimated_overtime" json:"estimatedOvertime" bson:"estimatedOvertime"`
+    Rate              float64 `db:"rate" json:"rate" bson:"rate"`
+    LaborExtension    float64 `db:"labor_extension" json:"laborExtension" bson:"laborExtension"`
 }
 
 var subscriptions *mgo.Collection
@@ -70,7 +96,10 @@ func createSubscription(w http.ResponseWriter, r *http.Request) {
         responseError(w, err.Error(), http.StatusBadRequest)
         return
     }
-
+    // asd := bson.NewObjectID()
+    subscription.ID = bson.NewObjectId()
+    // asd := bson.NewObjectId()
+    // log.Println(asd)
     // Insert new subscription
     err = subscriptions.Insert(subscription)
     if err != nil {
@@ -102,6 +131,34 @@ func responseJSON(w http.ResponseWriter, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(data)
 }
+
+// ----------------------------
+// func updateSubscription(w http.ResponseWriter, r *http.Request) {
+//     // Read body
+//     data, err := ioutil.ReadAll(r.Body)
+//     if err != nil {
+//         responseError(w, err.Error(), http.StatusBadRequest)
+//         return
+//     }
+
+//     // Read post
+//     subscription := &Subscription{}
+//     err = json.Unmarshal(data, subscription)
+//     if err != nil {
+//         responseError(w, err.Error(), http.StatusBadRequest)
+//         return
+//     }
+
+//     // Insert new subscription
+//     err = subscriptions.Insert(subscription)
+//     if err != nil {
+//         responseError(w, err.Error(), http.StatusInternalServerError)
+//         return
+//     }
+
+//     responseJSON(w, subscription)
+// }
+
 
 // TODO: Should I use this instead?
 // func initialiseMongo() (session *mgo.Session){

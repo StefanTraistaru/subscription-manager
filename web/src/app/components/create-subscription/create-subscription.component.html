@@ -1,18 +1,30 @@
 <div>
-    <h1 style="padding-left: 5px;">Create an asset</h1>
-    <div id="form-container">
-        <!-- <input [(ngModel)]="data.name" placeholder="name"/> -->
-        <input placeholder="Name" [(ngModel)]="data.name" required>
-        <input placeholder="Price" [(ngModel)]="data.price" required>
-        <textarea placeholder="Details" [(ngModel)]="data.details"></textarea>
-        <input placeholder="Day" [(ngModel)]="data.date_d" required>
-        <input placeholder="Month" [(ngModel)]="data.date_m" required>
-        <input placeholder="Year" [(ngModel)]="data.date_y" required>
-    </div>
+  <h1 mat-dialog-title style="padding-left: 5px;">Create an asset</h1>
+  <div mat-dialog-content id="form-container">
+      <!-- <input [(ngModel)]="data.name" placeholder="name"/> -->
+      <mat-form-field>
+        <input matInput placeholder="Name" [(ngModel)]="data.name" required>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Price" [(ngModel)]="data.price" required>
+      </mat-form-field>
+      <mat-form-field>
+        <textarea matInput placeholder="Details" [(ngModel)]="data.details"></textarea>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Day" [(ngModel)]="data.date_d" required>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Month" [(ngModel)]="data.date_m" required>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Year" [(ngModel)]="data.date_y" required>
+      </mat-form-field>
+  </div>
 
-    <div *ngIf="showWarning" id="warning">Please fill in required fields</div>
+  <div *ngIf="showWarning" id="warning">Please fill in required fields</div>
 
-    <div id="button-container" mat-dialog-actions>
-      <button id="ok-button" mat-raised-button (click)="createAsset()">Create</button>
-    </div>
+  <div id="button-container" mat-dialog-actions>
+    <button id="ok-button" mat-raised-button (click)="createAsset()">Create</button>
+  </div>
 </div>

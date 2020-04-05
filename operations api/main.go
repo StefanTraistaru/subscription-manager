@@ -23,7 +23,7 @@ const (
 type Subscription struct {
     Name        string `json:"name"`
     Price       string `json:"price"`
-    Description string `json:"description"`
+    Details     string `json:"details"`
     Date_d      string `json:"date_d"`
     Date_m      string `json:"date_m"`
     Date_y      string `json:"date_y"`

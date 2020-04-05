@@ -7,6 +7,7 @@ services:
             - "27017:27017"
         # volumes:
         #     - "mongodata:/data/db"
+
     operations-api:
         container_name: 'operations-api'
         build: './operations api'
@@ -18,13 +19,18 @@ services:
             - 'mongo'
     # web:
     #     container_name: 'web'
-    #     image: 'nodejs:latest'
+    #     # image: 'node:12'
+    #     build: './web'
     #     ports:
     #         - '8081:80'
+    #         - '8082:4200'
     #     # volumes:
     #     #     - './web: ?? '
     #     depends_on:
     #         - operations-api
+    #     tty: true
+    #     # links:
+    #     #     - operations-api
 
 # ??????
 # what are volumes and how do I use them?

@@ -1,0 +1,62 @@
+@import '../../../colors.scss';
+
+.example-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.example-container > * {
+  width: 100%;
+}
+
+#form-container {
+  /* background-color: #0ed329; */
+  margin: 0px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#button-container {
+  // background-color: #f1b818;
+  display: flex;
+  justify-content: space-between;
+}
+
+#cancel-button {
+  background-color: $primary-dark;
+  color: #ffffff;
+}
+
+#ok-button {
+  /* background-color: #0ed3d3; */
+  background-color: $secondary;
+  color: #ffffff;
+  float: right;
+}
+
+#loading-container {
+  /* background-color: #48ff6049; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#loading-title {
+  /* background-color: #f77e478f; */
+  font-size: 35px;
+  font-weight: 500;
+}
+
+#loading-spinner {
+  /* background-color: #f7d47391; */
+  padding: 20px;
+}
+
+#warning {
+  font-size: 12px;
+  color: $alert;
+  padding-left: 5px;
+}

@@ -6,6 +6,7 @@ import (
     "log"
     "net/http"
     "os"
+    "fmt"
 
     "./model"
 
@@ -23,15 +24,15 @@ const (
     collection = "jobs"
 )
 
-type Subscription struct {
-    ID          bson.ObjectId `db:"id" json:"id,omitempty" bson:"_id"`
-    Name        string `json:"name"`
-    Price       string `json:"price"`
-    Details     string `json:"details"`
-    Date_d      string `json:"date_d"`
-    Date_m      string `json:"date_m"`
-    Date_y      string `json:"date_y"`
-}
+// type Subscription struct {
+//     ID          bson.ObjectId `db:"id" json:"id,omitempty" bson:"_id"`
+//     Name        string `json:"name"`
+//     Price       string `json:"price"`
+//     Details     string `json:"details"`
+//     Date_d      string `json:"date_d"`
+//     Date_m      string `json:"date_m"`
+//     Date_y      string `json:"date_y"`
+// }
 
 var subscriptions *mgo.Collection
 
@@ -52,8 +53,9 @@ func main() {
     // Set up routes
     router := mux.NewRouter()
     router.HandleFunc("/user", createUser).Methods("POST")
-    router.HandleFunc("/subscriptions", createSubscription).Methods("POST")
-    router.HandleFunc("/subscriptions", getSubscriptions).Methods("GET")
+    router.HandleFunc("/subscriptions/{username}", createSubscription2).Methods("POST")
+    router.HandleFunc("/subscriptions/{username}", getSubscriptions2).Methods("GET")
+    router.HandleFunc("/subscription/{username}/{subName}", getSubscription).Methods("GET")
 
     http.ListenAndServe(":5000", cors.AllowAll().Handler(router))
     log.Println("Listening on port 5000...")
@@ -101,7 +103,7 @@ func createSubscription(w http.ResponseWriter, r *http.Request) {
     }
 
     // Read post
-    subscription := &Subscription{}
+    subscription := &model.Subscription{}
     err = json.Unmarshal(data, subscription)
     if err != nil {
         responseError(w, err.Error(), http.StatusBadRequest)
@@ -121,14 +123,137 @@ func createSubscription(w http.ResponseWriter, r *http.Request) {
     responseJSON(w, subscription)
 }
 
+
+// -------------------------------------------------------
+func createSubscription2(w http.ResponseWriter, r *http.Request) {
+    params := mux.Vars(r)
+    id := params["username"]
+    // if err != nil {
+    //     // TODO: change logWarning as logDebug
+    //     http.NotFound(w, r)
+    //     return
+    // }
+    log.Println("username: " + id)
+
+    // Read body
+    data, err := ioutil.ReadAll(r.Body)
+    if err != nil {
+        log.Println("Error read body")
+        log.Println(err.Error())
+        responseError(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    // Read post
+    // subscription := &model.Subscription{}
+    var subscription model.Subscription
+    err = json.Unmarshal(data, &subscription)
+    if err != nil {
+        log.Println("Error unmarshal body")
+        log.Println(err.Error())
+        responseError(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    var result model.DBUser
+    err = subscriptions.Find(bson.M{"username": id}).One(&result)
+    if err != nil {
+        log.Println("Error query DB")
+        log.Println(err.Error())
+        return
+    }
+
+    // asd := bson.NewObjectID()
+    subscription.ID = bson.NewObjectId()
+    result.Subscriptions = append(result.Subscriptions, subscription)
+    fmt.Println(result)
+    fmt.Println(result.Subscriptions)
+    // asd := bson.NewObjectId()
+    // log.Println(asd)
+    // Insert new subscription
+    // err = subscriptions.Insert(subscription)
+    err = subscriptions.Update(bson.M{"username": id}, result)
+    if err != nil {
+        log.Println("Error updating")
+        log.Println(err.Error())
+        responseError(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    responseJSON(w, subscription)
+}
+
+// -------------------------------------------------------
+
 func getSubscriptions(w http.ResponseWriter, r *http.Request) {
-    result := []Subscription{}
+    result := []model.Subscription{}
     err := subscriptions.Find(nil).Sort("-name").All(&result)
     if err != nil {
         responseError(w, err.Error(), http.StatusInternalServerError)
     } else {
         responseJSON(w, result)
     }
+}
+
+func getSubscriptions2(w http.ResponseWriter, r *http.Request) {
+    log.Println("Received request get all subscriptions")
+
+    params := mux.Vars(r)
+    username := params["username"]
+
+    var result model.DBUser
+    err := subscriptions.Find(bson.M{"username": username}).One(&result)
+    if err != nil {
+        log.Println("Error query DB")
+        log.Println(err.Error())
+        return
+    }
+
+    fmt.Println(result.Subscriptions)
+
+    responseJSON(w, result.Subscriptions)
+}
+
+func getSubscription(w http.ResponseWriter, r *http.Request) {
+    log.Println("Received request get one subscription")
+
+    params := mux.Vars(r)
+    username := params["username"]
+    log.Println(username)
+    subscriptionName := params["subName"]
+    log.Println(subscriptionName)
+
+
+    var result model.DBUser
+    err := subscriptions.Find(bson.M{"username": username}).One(&result)
+    if err != nil {
+        log.Println("Error query DB")
+        log.Println(err.Error())
+        return
+    }
+    fmt.Println(result)
+
+    for _, sub := range result.Subscriptions {
+        if sub.Name == subscriptionName {
+            fmt.Println(sub)
+            responseJSON(w, sub)
+            return
+        }
+    }
+
+    // TODO: Testing ---------------------------
+    // var result2 model.Subscription
+    // err = subscriptions.Find(bson.M{"username": username, "subscriptions.name": subscriptionName}).One(&result)
+    // if err != nil {
+    //     log.Println("Error query DB")
+    //     log.Println(err.Error())
+    //     return
+    // }
+    // fmt.Println(result2)
+    // responseJSON(w, result2)
+    // -----------------------------------
+
+    responseError(w, "Subscription not found", http.StatusBadRequest)
 }
 
 func responseError(w http.ResponseWriter, message string, code int) {

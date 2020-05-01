@@ -32,5 +32,5 @@ type Subscription struct {
 type ResponseResult struct {
     Error  string         `json:"error"`
     Result string         `json:"result"`
-    Data   []Subscription `json:"data`
+    Data   []Subscription `json:"data"`
 }

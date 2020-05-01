@@ -1,4 +1,4 @@
-FROM golang:latest
+FROM golang:1.12.1
 
 # RUN go get -d github.com/gorilla/mux
 RUN go get -d -v github.com/gorilla/mux \

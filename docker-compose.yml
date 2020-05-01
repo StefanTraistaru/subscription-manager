@@ -5,12 +5,27 @@ services:
         image: 'mongo:latest'
         ports:
             - "27017:27017"
+        volumes:
+            - ./.database/data:/data/db
+        # volumes:
+        #     - type: volume
+        #     source: mongodb_data_volume
+        #     target: /data/db
 
     mongo-credentials:
         container_name: 'mongo-credentials'
         image: 'mongo:latest'
         ports:
             - "27018:27017"
+        volumes:
+            - ./.database/cred:/data/db
+        # volumes: ./mongo/cred:/data/db
+        # volumes:
+        #     - type: volume
+        #     source: mongodb_cred_volume
+        #     target: /data/db
+
+
 
     # redis:
     #     container_name: 'redis'
@@ -28,14 +43,6 @@ services:
             - '5000:5000'
         depends_on:
             - 'mongo'
-
-    # auth-api:
-    #     container_name: 'auth-api'
-    #     build: './auth'
-    #     ports:
-    #         - '5001:5001'
-    #     depends_on:
-    #         - 'redis'
 
     login-api:
         container_name: 'login-api'
@@ -64,3 +71,9 @@ services:
     #     tty: true
     #     links:
     #         - operations-api
+
+# volumes:
+#     mongodb_cred_volume:
+#         external: true
+#     mongodb_data_volume:
+#         external: true

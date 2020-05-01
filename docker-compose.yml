@@ -7,10 +7,6 @@ services:
             - "27017:27017"
         volumes:
             - ./.database/data:/data/db
-        # volumes:
-        #     - type: volume
-        #     source: mongodb_data_volume
-        #     target: /data/db
 
     mongo-credentials:
         container_name: 'mongo-credentials'
@@ -19,13 +15,6 @@ services:
             - "27018:27017"
         volumes:
             - ./.database/cred:/data/db
-        # volumes: ./mongo/cred:/data/db
-        # volumes:
-        #     - type: volume
-        #     source: mongodb_cred_volume
-        #     target: /data/db
-
-
 
     # redis:
     #     container_name: 'redis'
@@ -71,9 +60,3 @@ services:
     #     tty: true
     #     links:
     #         - operations-api
-
-# volumes:
-#     mongodb_cred_volume:
-#         external: true
-#     mongodb_data_volume:
-#         external: true

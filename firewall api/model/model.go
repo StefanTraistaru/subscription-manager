@@ -1,9 +1,5 @@
 package model
 
-// import (
-//     "gopkg.in/mgo.v2/bson"
-// )
-
 type User struct {
     Username  string `json:"username"`
     FirstName string `json:"firstname"`

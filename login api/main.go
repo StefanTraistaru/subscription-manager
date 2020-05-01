@@ -9,9 +9,9 @@ import (
 
 func main() {
     r := mux.NewRouter()
-    r.HandleFunc("/register", controller.RegisterHandler).Methods("POST")
-    r.HandleFunc("/login", controller.LoginHandler).Methods("POST")
-    r.HandleFunc("/profile", controller.ProfileHandler).Methods("GET")
+    r.HandleFunc("/register", controller.Register).Methods("POST")
+    r.HandleFunc("/login", controller.Login).Methods("POST")
+    r.HandleFunc("/delete/{username}", controller.Delete).Methods("POST")
 
     log.Fatal(http.ListenAndServe(":5002", r))
 }

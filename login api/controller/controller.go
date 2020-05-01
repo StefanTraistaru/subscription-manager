@@ -1,24 +1,24 @@
 package controller
 
 import (
-    // "context"
     "encoding/json"
     "log"
-    "fmt"
-    "../db"
-    // "../model"
-    "../model"
     "io/ioutil"
     "net/http"
+    "../db"
+    "../model"
 
     jwt "github.com/dgrijalva/jwt-go"
-    "go.mongodb.org/mongo-driver/bson"
+    "gopkg.in/mgo.v2/bson"
     "golang.org/x/crypto/bcrypt"
-
-    // "gopkg.in/mgo.v2"
+    "github.com/gorilla/mux"
 )
 
-func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+////////////////////////////////////////////////////
+// Handler functions
+////////////////////////////////////////////////////
+
+func Register(w http.ResponseWriter, r *http.Request) {
     log.Println("Received request: register")
 
     // Read body of the request
@@ -31,7 +31,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     // Get connection to DB
-    collection, session, err := db.GetDBCollection2()
+    collection, session, err := db.GetDBCollection()
     if err != nil {
         responseError(w, "Cannot get connection to DB", err, http.StatusInternalServerError)
         return
@@ -68,7 +68,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
     return
 }
 
-func LoginHandler(w http.ResponseWriter, r *http.Request) {
+func Login(w http.ResponseWriter, r *http.Request) {
     log.Println("Received request: login")
 
     // Read body of the request
@@ -81,7 +81,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     // Get connection to DB
-    collection, session, err := db.GetDBCollection2()
+    collection, session, err := db.GetDBCollection()
     if err != nil {
         responseError(w, "Cannot get connection to DB", err, http.StatusInternalServerError)
         return
@@ -122,34 +122,39 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
     responseJSON(w, "Login successful", tokenString)
 }
 
-// TODO: Keep this?
-func ProfileHandler(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    tokenString := r.Header.Get("Authorization")
-    token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-        // Don't forget to validate the alg is what you expect:
-        if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-            return nil, fmt.Errorf("Unexpected signing method")
-        }
-        return []byte("secret"), nil
-    })
-    var result model.User
-    var res model.ResponseResult
-    if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-        result.Username = claims["username"].(string)
-        result.FirstName = claims["firstname"].(string)
-        result.LastName = claims["lastname"].(string)
+func Delete(w http.ResponseWriter, r *http.Request) {
+    log.Println("Received request: delete")
 
-        json.NewEncoder(w).Encode(result)
+    // Read body
+    params := mux.Vars(r)
+    id := params["username"]
+
+    // Get connection to DB
+    collection, session, err := db.GetDBCollection()
+    if err != nil {
+        responseError(w, "Cannot get connection to DB", err, http.StatusInternalServerError)
         return
-    } else {
-        res.Error = err.Error()
-        json.NewEncoder(w).Encode(res)
+    }
+    defer session.Close()
+
+    // Query DB for user
+    err = collection.Remove(bson.M{"username": id})
+    if err != nil {
+        if err.Error() == "not found" {
+            responseJSON(w, "Invalid user", "Invalid user")
+            return
+        }
+        responseError(w, "Query DB", err, http.StatusInternalServerError)
         return
     }
 
+    responseJSON(w, "Deletion successful", "Deletion successful")
 }
 
+
+////////////////////////////////////////////////////
+// Util functions
+////////////////////////////////////////////////////
 
 func responseError(w http.ResponseWriter, logMessage string, err error, code int) {
     log.Println("Error: " + logMessage)

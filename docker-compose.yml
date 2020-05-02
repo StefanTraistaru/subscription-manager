@@ -6,7 +6,7 @@ services:
         ports:
             - "27017:27017"
         volumes:
-            - ./.database/data:/data/db
+            - ./config/mongodb/subs:/data/db
 
     mongo-credentials:
         container_name: 'mongo-credentials'
@@ -14,7 +14,7 @@ services:
         ports:
             - "27018:27017"
         volumes:
-            - ./.database/cred:/data/db
+            - ./config/mongodb/cred:/data/db
 
     # redis:
     #     container_name: 'redis'
@@ -48,6 +48,7 @@ services:
             - '5003:5003'
         depends_on:
             - 'login-api'
+            - 'operations-api'
 
     # web:
     #     container_name: 'web'
@@ -60,3 +61,24 @@ services:
     #     tty: true
     #     links:
     #         - operations-api
+
+    prometheus:
+        container_name: 'prometheus'
+        image: prom/prometheus
+        # image: quay.io/prometheus/prometheus:latest
+        ports:
+            - '9090:9090'
+        volumes:
+            - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        depends_on:
+            - 'firewall-api'
+
+    grafana:
+        container_name: 'grafana'
+        image: grafana/grafana
+        ports:
+            - '3000:3000'
+        volumes:
+            - ./config/grafana:/var/lib/grafana
+        depends_on:
+            - 'firewall-api'

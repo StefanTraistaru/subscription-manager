@@ -1,2 +1,2 @@
 # Database persistent storage
-.database/
+config/mongodb/

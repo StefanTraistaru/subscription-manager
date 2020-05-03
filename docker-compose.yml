@@ -1,41 +1,84 @@
 version: '3'
 services:
     mongo:
-        image: 'mongo:latest'
         container_name: 'mongo'
+        image: 'mongo:latest'
         ports:
             - "27017:27017"
-        # volumes:
-        #     - "mongodata:/data/db"
+        volumes:
+            - ./config/mongodb/subs:/data/db
+
+    mongo-credentials:
+        container_name: 'mongo-credentials'
+        image: 'mongo:latest'
+        ports:
+            - "27018:27017"
+        volumes:
+            - ./config/mongodb/cred:/data/db
+
+    # redis:
+    #     container_name: 'redis'
+    #     image: redis:latest
+    #     ports:
+    #         - 6379:6379
+    #     volumes:
+    #         - ./config/redis.conf:/redis.conf
+    #     command: [ "redis-server", "/redis.conf" ]
 
     operations-api:
         container_name: 'operations-api'
         build: './operations api'
         ports:
             - '5000:5000'
-        # volumes:
-        #     - './operations api:/go/src/app'
         depends_on:
             - 'mongo'
-    web:
-        container_name: 'web'
-        # image: 'node:12'
-        build: './web'
+
+    login-api:
+        container_name: 'login-api'
+        build: './login api'
         ports:
-            - '8081:80'
-            - '8082:4200'
-        # volumes:
-        #     - './web: ?? '
+            - '5002:5002'
         depends_on:
-            - operations-api
-        tty: true
-        # links:
-        #     - operations-api
+            - 'mongo-credentials'
 
-# ??????
-# what are volumes and how do I use them?
-# volumes:
-#     mongodata:
+    firewall-api:
+        container_name: 'firewall-api'
+        build: './firewall api'
+        ports:
+            - '5003:5003'
+        depends_on:
+            - 'login-api'
+            - 'operations-api'
 
-# networks:
-#     network1:
+    # web:
+    #     container_name: 'web'
+    #     build: './web'
+    #     ports:
+    #         - '8081:80'
+    #         - '8082:4200'
+    #     depends_on:
+    #         - operations-api
+    #     tty: true
+    #     links:
+    #         - operations-api
+
+    prometheus:
+        container_name: 'prometheus'
+        image: prom/prometheus
+        # image: quay.io/prometheus/prometheus:latest
+        ports:
+            - '9090:9090'
+        volumes:
+            - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        depends_on:
+            - 'firewall-api'
+
+    grafana:
+        container_name: 'grafana'
+        image: grafana/grafana
+        ports:
+            - '3000:3000'
+        volumes:
+            - ./config/grafana:/var/lib/grafana
+        depends_on:
+            - 'firewall-api'

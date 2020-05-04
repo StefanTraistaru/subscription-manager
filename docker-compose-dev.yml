@@ -16,15 +16,6 @@ services:
         volumes:
             - ./config/mongodb/cred:/data/db
 
-    # redis:
-    #     container_name: 'redis'
-    #     image: redis:latest
-    #     ports:
-    #         - 6379:6379
-    #     volumes:
-    #         - ./config/redis.conf:/redis.conf
-    #     command: [ "redis-server", "/redis.conf" ]
-
     operations-api:
         container_name: 'operations-api'
         build: './operations api'
@@ -32,6 +23,8 @@ services:
             - '5000:5000'
         depends_on:
             - 'mongo'
+        networks:
+            - webnet
 
     login-api:
         container_name: 'login-api'
@@ -40,6 +33,8 @@ services:
             - '5002:5002'
         depends_on:
             - 'mongo-credentials'
+        networks:
+            - webnet
 
     firewall-api:
         container_name: 'firewall-api'
@@ -49,43 +44,22 @@ services:
         depends_on:
             - 'login-api'
             - 'operations-api'
+        networks:
+            - webnet
 
-    # web:
-    #     container_name: 'web'
-    #     build: './web'
-    #     ports:
-    #         - '8081:80'
-    #         - '8082:4200'
-    #     depends_on:
-    #         - operations-api
-    #     tty: true
-    #     links:
-    #         - operations-api
-
-    prometheus:
-        container_name: 'prometheus'
-        image: prom/prometheus
-        # image: quay.io/prometheus/prometheus:latest
+    web:
+        container_name: 'web'
+        build: './web'
         ports:
-            - '9090:9090'
-        volumes:
-            - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+            - '8081:80'
+            - '8082:4200'
         depends_on:
-            - 'firewall-api'
+            - operations-api
+        networks:
+            - webnet
+        # tty: true
+        # links:
+        #     - operations-api
 
-    grafana:
-        container_name: 'grafana'
-        image: grafana/grafana
-        ports:
-            - '3000:3000'
-        volumes:
-            - ./config/grafana:/var/lib/grafana
-        depends_on:
-            - 'firewall-api'
-
-    visualizer:
-        image: dockersamples/visualizer:stable
-        ports:
-            - '8080:8080'
-        volumes:
-            - '/var/run/docker.sock:/var/run/docker.sock'
+networks:
+    webnet:

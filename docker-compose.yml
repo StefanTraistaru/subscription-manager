@@ -6,7 +6,7 @@ services:
             resources:
                 limits:
                     cpus: "0.2"
-                    memory: 100M
+                    memory: 300M
             restart_policy:
                 condition: on-failure
         ports:
@@ -22,7 +22,7 @@ services:
             resources:
                 limits:
                     cpus: "0.2"
-                    memory: 100M
+                    memory: 300M
             restart_policy:
                 condition: on-failure
         ports:
@@ -104,7 +104,7 @@ services:
             resources:
                 limits:
                     cpus: "0.2"
-                    memory: 100M
+                    memory: 200M
             restart_policy:
                 condition: on-failure
         ports:
@@ -135,12 +135,31 @@ services:
         networks:
             - webnet
 
-    visualizer:
-        image: dockersamples/visualizer:stable
+    # visualizer:
+    #     image: dockersamples/visualizer:stable
+    #     ports:
+    #         - '8080:8080'
+    #     volumes:
+    #         - /var/run/docker.sock:/var/run/docker.sock
+    #     networks:
+    #         - webnet
+
+    cadvisor:
+        image: google/cadvisor:latest
+        volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:rw
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
         ports:
             - '8080:8080'
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
+        networks:
+            - webnet
+
+    node-exporter:
+        image: prom/node-exporter:latest
+        expose:
+            - 9100
         networks:
             - webnet
 

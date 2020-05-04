@@ -1,0 +1,65 @@
+version: '3'
+services:
+    mongo:
+        container_name: 'mongo'
+        image: 'mongo:latest'
+        ports:
+            - "27017:27017"
+        volumes:
+            - ./config/mongodb/subs:/data/db
+
+    mongo-credentials:
+        container_name: 'mongo-credentials'
+        image: 'mongo:latest'
+        ports:
+            - "27018:27017"
+        volumes:
+            - ./config/mongodb/cred:/data/db
+
+    operations-api:
+        container_name: 'operations-api'
+        build: './operations api'
+        ports:
+            - '5000:5000'
+        depends_on:
+            - 'mongo'
+        networks:
+            - webnet
+
+    login-api:
+        container_name: 'login-api'
+        build: './login api'
+        ports:
+            - '5002:5002'
+        depends_on:
+            - 'mongo-credentials'
+        networks:
+            - webnet
+
+    firewall-api:
+        container_name: 'firewall-api'
+        build: './firewall api'
+        ports:
+            - '5003:5003'
+        depends_on:
+            - 'login-api'
+            - 'operations-api'
+        networks:
+            - webnet
+
+    web:
+        container_name: 'web'
+        build: './web'
+        ports:
+            - '8081:80'
+            - '8082:4200'
+        depends_on:
+            - operations-api
+        networks:
+            - webnet
+        # tty: true
+        # links:
+        #     - operations-api
+
+networks:
+    webnet:

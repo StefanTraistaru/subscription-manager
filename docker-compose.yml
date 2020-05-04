@@ -1,58 +1,93 @@
 version: '3'
 services:
     mongo:
-        container_name: 'mongo'
         image: 'mongo:latest'
+        deploy:
+            resources:
+                limits:
+                    cpus: "0.2"
+                    memory: 100M
+            restart_policy:
+                condition: on-failure
         ports:
             - "27017:27017"
         volumes:
             - ./config/mongodb/subs:/data/db
+        networks:
+            - webnet
 
     mongo-credentials:
-        container_name: 'mongo-credentials'
         image: 'mongo:latest'
+        deploy:
+            resources:
+                limits:
+                    cpus: "0.2"
+                    memory: 100M
+            restart_policy:
+                condition: on-failure
         ports:
             - "27018:27017"
         volumes:
             - ./config/mongodb/cred:/data/db
-
-    # redis:
-    #     container_name: 'redis'
-    #     image: redis:latest
-    #     ports:
-    #         - 6379:6379
-    #     volumes:
-    #         - ./config/redis.conf:/redis.conf
-    #     command: [ "redis-server", "/redis.conf" ]
+        networks:
+            - webnet
 
     operations-api:
-        container_name: 'operations-api'
-        build: './operations api'
+        image: stefantraistaru/subscription-manager:operations-api
+        deploy:
+            replicas: 2
+            resources:
+                limits:
+                    cpus: "0.2"
+                    memory: 100M
+            restart_policy:
+                condition: on-failure
         ports:
             - '5000:5000'
         depends_on:
             - 'mongo'
+        networks:
+            - webnet
 
     login-api:
-        container_name: 'login-api'
-        build: './login api'
+        image: stefantraistaru/subscription-manager:login-api
+        deploy:
+            replicas: 2
+            resources:
+                limits:
+                    cpus: "0.2"
+                    memory: 100M
+            restart_policy:
+                condition: on-failure
         ports:
             - '5002:5002'
         depends_on:
             - 'mongo-credentials'
+        networks:
+            - webnet
 
     firewall-api:
-        container_name: 'firewall-api'
-        build: './firewall api'
+        image: stefantraistaru/subscription-manager:firewall-api
+        deploy:
+            replicas: 2
+            resources:
+                limits:
+                    cpus: "0.2"
+                    memory: 100M
+            restart_policy:
+                condition: on-failure
         ports:
             - '5003:5003'
         depends_on:
             - 'login-api'
             - 'operations-api'
+        networks:
+            - webnet
 
     # web:
-    #     container_name: 'web'
-    #     build: './web'
+    #     # container_name: 'web'
+    #     # build: './web'
+    #     image: stefantraistaru/subscription-manager:web
     #     ports:
     #         - '8081:80'
     #         - '8082:4200'
@@ -63,22 +98,51 @@ services:
     #         - operations-api
 
     prometheus:
-        container_name: 'prometheus'
         image: prom/prometheus
         # image: quay.io/prometheus/prometheus:latest
+        deploy:
+            resources:
+                limits:
+                    cpus: "0.2"
+                    memory: 100M
+            restart_policy:
+                condition: on-failure
         ports:
             - '9090:9090'
         volumes:
             - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
         depends_on:
             - 'firewall-api'
+        networks:
+            - webnet
 
     grafana:
-        container_name: 'grafana'
         image: grafana/grafana
+        user: '1000'
+        deploy:
+            resources:
+                limits:
+                    cpus: "0.2"
+                    memory: 100M
+            restart_policy:
+                condition: on-failure
         ports:
             - '3000:3000'
         volumes:
             - ./config/grafana:/var/lib/grafana
         depends_on:
             - 'firewall-api'
+        networks:
+            - webnet
+
+    visualizer:
+        image: dockersamples/visualizer:stable
+        ports:
+            - '8080:8080'
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        networks:
+            - webnet
+
+networks:
+    webnet:

@@ -7,6 +7,8 @@ services:
             - "27017:27017"
         volumes:
             - ./config/mongodb/subs:/data/db
+        networks:
+            - webnet
 
     mongo-credentials:
         container_name: 'mongo-credentials'
@@ -15,6 +17,8 @@ services:
             - "27018:27017"
         volumes:
             - ./config/mongodb/cred:/data/db
+        networks:
+            - webnet
 
     operations-api:
         container_name: 'operations-api'
@@ -57,9 +61,20 @@ services:
             - operations-api
         networks:
             - webnet
-        # tty: true
-        # links:
-        #     - operations-api
+
+    # web:
+    #     container_name: 'web'
+    #     build:
+    #         context: './web'
+    #         args:
+    #             env: prod
+    #     ports:
+    #         - '8081:80'
+    #         - '8082:4200'
+    #     depends_on:
+    #         - operations-api
+    #     networks:
+    #         - webnet
 
 networks:
     webnet:

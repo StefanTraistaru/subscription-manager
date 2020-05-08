@@ -127,7 +127,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
         // Create and send response
         var response model.ResponseResult
-        response.Result = "Login successful"
+        response.Result = token
         responseJSON(w, "Login successful", response)
         return
     }

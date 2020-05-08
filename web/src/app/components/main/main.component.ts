@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { WebService } from 'src/app/web.service'
+import { throwIfEmpty } from 'rxjs/operators';
 
 @Component({
   selector: 'app-main',
@@ -7,9 +11,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MainComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    public webService: WebService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
   }
 
+  logoutUser(): void {
+    this.webService.logoutUser();
+    this.router.navigateByUrl('/');
+  }
 }

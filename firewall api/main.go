@@ -23,6 +23,8 @@ func main() {
     prometheus.MustRegister(counter)
     // Set up routes
     router := mux.NewRouter()
+    // We use our custom CORS Middleware
+    router.Use(CORS)
 
     // Login api
     router.HandleFunc("/register", LogPrometheus("Register", (controller.Register))).Methods("POST")
@@ -43,8 +45,32 @@ func main() {
 func LogPrometheus(request string, next httpHandlerFunc) httpHandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
         // Increase prometheus statistics
+        log.Println("prometheus middleware: " + request)
         counter.WithLabelValues(request).Inc()
         // Call the next handler.
         next(w, r)
     }
+}
+
+// CORS Middleware
+func CORS(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+        // Set headers
+        w.Header().Set("Access-Control-Allow-Headers:", "*")
+        w.Header().Set("Access-Control-Allow-Origin", "*")
+        w.Header().Set("Access-Control-Allow-Methods", "*")
+
+        if r.Method == "OPTIONS" {
+            log.Println("OPTIONS")
+            w.WriteHeader(http.StatusOK)
+            return
+        }
+
+        log.Println("ok")
+
+        // Next
+        next.ServeHTTP(w, r)
+        return
+    })
 }

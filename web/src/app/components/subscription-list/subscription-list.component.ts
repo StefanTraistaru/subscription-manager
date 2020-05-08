@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 
 import { Subscription } from 'src/app/model/subscription'
-// import { subscriptions } from '../../subscriptions'
+import { ResponseResult } from 'src/app/model/response'
 
 import { WebService } from '../../web.service';
 import { MatTableDataSource } from '@angular/material/table';
@@ -51,8 +51,9 @@ export class SubscriptionListComponent implements OnInit {
 
   getSubscriptions(): void {
     this.webService.getSubscriptions().subscribe(
-      subs => {
-        this.my_subs = subs;
+      res => {
+        console.log(res);
+        this.my_subs = res.data;
         this.dataSource = new MatTableDataSource<Subscription>(this.my_subs)
         this.dataSource.paginator = this.paginator;
         console.log("Got subscriptions.");

@@ -1,9 +1,25 @@
-<div>
-    <h1>This is your subscription manager</h1>
-    <input type="submit" value="Logout" (click)="logoutUser()">
-</div>
+<div id="cont">
+    <mat-toolbar color="primary" id="toolbar" class="mat-elevation-z20">
+        <div id="title-container">
+            <h1>This is your subscription manager</h1>
+        </div>
+        <div id="logout-container">
+            <p id="username">{{username}}</p>
+            <div id="button-container" mat-dialog-actions>
+                <button id="ok-button" mat-raised-button (click)="logoutUser()">Logout</button>
+            </div>
+        </div>
+    </mat-toolbar>
 
-<div>
-    <app-subscription-list></app-subscription-list>
-    <app-create-subscription></app-create-subscription>
+    <div id="container-list">
+        <div>
+            <app-subscription-list></app-subscription-list>
+        </div>
+    </div>
+
+    <div id="container-form">
+        <mat-card>
+            <app-create-subscription></app-create-subscription>
+        </mat-card>
+    </div>
 </div>

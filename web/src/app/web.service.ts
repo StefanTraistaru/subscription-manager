@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { Subscription } from './model/subscription';
@@ -13,9 +13,7 @@ import { User } from './model/user';
 export class WebService {
 
   private apiUrl = 'http://127.0.0.1:5003';
-  // user details
-  private username = '';
-  private token = '';
+  public subCreated = new Subject<boolean>();
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -23,7 +21,7 @@ export class WebService {
 
   constructor(private http: HttpClient) { }
 
-  /////////////////////////////////////
+
   // LOGIN API
 
   registerUser(user: User) {
@@ -60,7 +58,6 @@ export class WebService {
           user.token = response.result;
           this.saveInLocal(user);
           // localStorage.setItem('dataSource', "test local storage");
-          console.log(this.token)
           var aux = this.getFromLocal();
           console.log("From local storage: " + aux);
         } else {
@@ -75,13 +72,7 @@ export class WebService {
     this.deleteLocal();
   }
 
-  // TODO:
-  // getUserData() {
-  //
-  //  }
 
-
-  /////////////////////////////////////
   // OPERATIONS API
   getSubscriptions(): Observable<ResponseResult> {
     var aux = this.getFromLocal();
@@ -95,7 +86,6 @@ export class WebService {
     return this.http.get<ResponseResult>(url, { headers: reqHeader }).pipe();
   }
 
-  // TODO:
   createSubscription(sub: Subscription) {
     var aux = this.getFromLocal();
     console.log(aux.username)
@@ -112,7 +102,7 @@ export class WebService {
     )
   }
 
-  /////////////////////////////////////
+
   // Util functions
 
   saveInLocal(user: User) {

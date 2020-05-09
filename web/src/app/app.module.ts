@@ -29,11 +29,11 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 
+// import { MatDatepickerModule } from '@angular/material/datepicker';
 // import { MatButtonToggleModule } from '@angular/material/button-toggle';
 // import { MatCheckboxModule } from '@angular/material/checkbox';
 // import { MatChipsModule } from '@angular/material/chips';
 // import { MatStepperModule } from '@angular/material/stepper';
-// import { MatDatepickerModule } from '@angular/material/datepicker';
 // import { MatExpansionModule } from '@angular/material/expansion';
 // import { MatGridListModule } from '@angular/material/grid-list';
 // import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -73,7 +73,6 @@ import { RegisterComponent } from './components/register/register.component';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    // MatOptionModule,
     MatTableModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
@@ -93,7 +92,6 @@ import { RegisterComponent } from './components/register/register.component';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    // MatOptionModule,
     MatTableModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,

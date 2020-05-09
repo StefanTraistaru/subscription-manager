@@ -1,12 +1,24 @@
-<h1>Login</h1>
-<div>
-    <div>Username</div>
-    <input type="text" placeholder="username" [(ngModel)]="data.username">
-    <div>Password</div>
-    <input type="password" placeholder="password" [(ngModel)]="data.password">
-    <input type="submit" value="Login" (click)="loginUser()">
+<div id="cont">
+    <mat-card id="card-container">
+        <div id="container">
+            <h1>Login</h1>
 
-    <div>
-        <a [routerLink]="['/register']">Don't have an account? Sign up</a>
-    </div>
+            <div mat-dialog-content id="form-container">
+                <mat-form-field>
+                    <input matInput placeholder="Username" [(ngModel)]="data.username" required>
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput type="password" placeholder="Password" [(ngModel)]="data.password" required>
+                </mat-form-field>
+            </div>
+
+            <div id="signup-container">
+                <a [routerLink]="['/register']">Don't have an account? Sign up</a>
+            </div>
+
+            <div id="button-container" mat-dialog-actions>
+                <button id="ok-button" mat-raised-button (click)="loginUser()">Login</button>
+            </div>
+        </div>
+    </mat-card>
 </div>

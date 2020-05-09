@@ -86,8 +86,7 @@ services:
             - webnet
 
     web:
-        # image: subscription-manager_web:latest
-        image: myapp:latest
+        image: subscription-manager_web:latest
         ports:
             - '8081:80'
             - '8082:4200'
@@ -157,8 +156,8 @@ services:
 
     node-exporter:
         image: prom/node-exporter:latest
-        expose:
-            - 9100
+        # expose:
+        #     - 9100
         networks:
             - webnet
 

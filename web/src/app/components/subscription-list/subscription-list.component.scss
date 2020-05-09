@@ -1,3 +1,29 @@
 table {
     width: 100%;
 }
+
+th.mat-header-cell {
+    overflow: hidden;
+    width: 200px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+}
+
+td {
+    overflow: hidden;
+    width: 200px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.mat-paginator {
+    display: contents;
+}
+
+#totalCosts {
+    padding: 0 0 20px 0;
+    font-size: large;
+    font-weight: bold;
+}

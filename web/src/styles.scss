@@ -1,2 +1,42 @@
 /* You can add global styles to this file, and also import other style files */
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+// @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+@import 'my_material.css';
+@import 'colors.scss';
+
+* {
+  // font-family: 'Roboto';
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0
+}
+
+.mat-input-element {
+  caret-color: $secondary;
+}
+
+.mat-form-field.mat-focused .mat-form-field-label {
+  color: $secondary;
+}
+
+.mat-toolbar .mat-focused .mat-form-field-ripple,
+.mat-toolbar .mat-form-field-ripple,
+.mat-toolbar .mat-form-field-underline {
+  background-color: $secondary;
+}
+
+.mat-form-field.mat-focused .mat-form-field-ripple {
+  background-color: $secondary;
+}
+
+.mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
+  color: $secondary;
+}
+
+.mat-progress-spinner circle,
+.mat-spinner circle {
+  stroke: $secondary;
+}

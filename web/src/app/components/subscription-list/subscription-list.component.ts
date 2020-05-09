@@ -8,20 +8,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 
-const ELEMENT_DATA: Subscription[] = [
-  {name: 'Hydrogen', price: '12', details: 'asd', date_d: 'a', date_m: 's', date_y: 'd'},
-  {name: 'Helium', price: '12', details: 'asd', date_d: 'a', date_m: 's', date_y: 'd'},
-  {name: 'Lithium', price: '12', details: 'asd', date_d: 'a', date_m: 's', date_y: 'd'},
-  {name: 'Beryllium', price: '12', details: 'asd', date_d: 'a', date_m: 's', date_y: 'd'},
-  {name: 'Boron', price: '12', details: 'asd', date_d: 'a', date_m: 's', date_y: 'd'},
-  {name: 'Carbon', price: '12', details: 'asd', date_d: 'a', date_m: 's', date_y: 'd'},
-  {name: 'Nitrogen', price: '12', details: 'asd', date_d: 'a', date_m: 's', date_y: 'd'},
-  {name: 'Oxygen', price: '12', details: 'asd', date_d: 'a', date_m: 's', date_y: 'd'},
-  {name: 'Fluorine', price: '12', details: 'asd', date_d: 'a', date_m: 's', date_y: 'd'},
-  {name: 'Neon', price: '12', details: 'asd', date_d: 'a', date_m: 's', date_y: 'd'},
-];
-
-
 @Component({
   selector: 'app-subscription-list',
   templateUrl: './subscription-list.component.html',
@@ -29,14 +15,11 @@ const ELEMENT_DATA: Subscription[] = [
 })
 export class SubscriptionListComponent implements OnInit {
 
-  // public my_subs;
   my_subs: Subscription[];
-  // displayedColumns: string[] = ['name', 'price', 'day', 'month', 'year'];
-  displayedColumns: string[] = ['name', 'price', 'details', 'date'];
+  displayedColumns: string[] = ['name', 'details', 'date', 'price'];
   expandedElement: Subscription | null;
-
   dataSource = new MatTableDataSource<Subscription>(this.my_subs)
-  // dataSource = ELEMENT_DATA;
+  totalCosts: number;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
@@ -45,8 +28,12 @@ export class SubscriptionListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // this.my_subs = subscriptions;
     this.getSubscriptions();
+    this.webService.subCreated.subscribe(
+      _ => {
+        this.refreshWindow();
+      }
+    );
   }
 
   getSubscriptions(): void {
@@ -57,8 +44,22 @@ export class SubscriptionListComponent implements OnInit {
         this.dataSource = new MatTableDataSource<Subscription>(this.my_subs)
         this.dataSource.paginator = this.paginator;
         console.log("Got subscriptions.");
+        this.calculateCosts();
       }
     )
+  }
+
+  calculateCosts(): void {
+    this.totalCosts = 0;
+    this.my_subs.forEach(sub => {
+      if (!isNaN(+sub.price)) {
+        this.totalCosts += +sub.price;
+      }
+    });
+  }
+
+  refreshWindow() {
+    this.getSubscriptions();
   }
 
 }

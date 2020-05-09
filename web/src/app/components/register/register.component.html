@@ -1,19 +1,32 @@
-<h1>Sign up</h1>
-<div>
-    <div>
-        <div>Username</div>
-        <input type="text" placeholder="username" [(ngModel)]="data.username">
-        <div>First Name</div>
-        <input type="text" placeholder="first name" [(ngModel)]="data.firstname">
-        <div>Last Name</div>
-        <input type="text" placeholder="last name" [(ngModel)]="data.lastname">
-        <div>Password</div>
-        <input type="text" placeholder="password" [(ngModel)]="data.password">
-    </div>
-    <div *ngIf="showWarning" id="warning">Please fill in required fields</div>
-    <input type="submit" value="Sign up" (click)="registerUser()">
+<div id="cont">
+    <mat-card id="card-container">
+        <div id="container">
+            <h1>Sign up</h1>
 
-    <div>
-        <a [routerLink]="['/login']">Already have an account? Login</a>
-    </div>
+            <div mat-dialog-content id="form-container">
+                <mat-form-field>
+                    <input matInput placeholder="First name" [(ngModel)]="data.firstname" required>
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput placeholder="Last Name" [(ngModel)]="data.lastname" required>
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput placeholder="Username" [(ngModel)]="data.username" required>
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput type="password" placeholder="Password" [(ngModel)]="data.password" required>
+                </mat-form-field>
+            </div>
+
+            <div *ngIf="showWarning" id="warning">Please fill in required fields</div>
+
+            <div id="signup-container">
+                <a [routerLink]="['/login']">Already have an account? Login</a>
+            </div>
+
+            <div id="button-container" mat-dialog-actions>
+                <button id="ok-button" mat-raised-button (click)="registerUser()">Sign up</button>
+            </div>
+        </div>
+    </mat-card>
 </div>

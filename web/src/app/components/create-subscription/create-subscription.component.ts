@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDatepicker } from '@angular/material/datepicker';
 
 import { WebService } from 'src/app/web.service'
 import { Subscription } from 'src/app/model/subscription'
@@ -34,6 +35,7 @@ export class CreateSubscriptionComponent implements OnInit {
       _ => {
         console.log('done');
         this.data = new Subscription("","","","","","");
+        this.webService.subCreated.next(true);
       }
     )
   }

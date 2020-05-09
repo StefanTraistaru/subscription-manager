@@ -1,0 +1,44 @@
+@import '../../../colors.scss';
+
+#cont {
+    background-color: $background;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#card-container {
+    width: max-content;
+    height: max-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#container {
+    height: 100%;
+    width: 100%;
+    padding: 10px 100px 10px 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+}
+
+#ok-button {
+    background-color: $secondary;
+    color: #ffffff;
+    float: right;
+    font-weight: bold;
+}
+
+#form-container {
+    display: flex;
+    flex-direction: column;
+}
+
+#signup-container {
+    padding: 10px 0 20px 0;
+}

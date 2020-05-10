@@ -67,10 +67,9 @@ services:
             - webnet
 
     firewall-api:
-        # image: stefantraistaru/subscription-manager:firewall-api
-        image: subscription-manager_firewall-api:latest
+        image: stefantraistaru/subscription-manager:firewall-api
         deploy:
-            replicas: 1
+            replicas: 2
             resources:
                 limits:
                     cpus: "0.2"
@@ -86,7 +85,15 @@ services:
             - webnet
 
     web:
-        image: subscription-manager_web:latest
+        image: stefantraistaru/subscription-manager:web
+        deploy:
+            replicas: 1
+            resources:
+                limits:
+                    cpus: "0.2"
+                    memory: 100M
+            restart_policy:
+                condition: on-failure
         ports:
             - '8081:80'
             - '8082:4200'
@@ -97,7 +104,6 @@ services:
 
     prometheus:
         image: prom/prometheus
-        # image: quay.io/prometheus/prometheus:latest
         deploy:
             resources:
                 limits:
@@ -144,6 +150,13 @@ services:
 
     cadvisor:
         image: google/cadvisor:latest
+        deploy:
+            resources:
+                limits:
+                    cpus: "0.2"
+                    memory: 100M
+            restart_policy:
+                condition: on-failure
         volumes:
             - /:/rootfs:ro
             - /var/run:/var/run:rw
@@ -156,8 +169,13 @@ services:
 
     node-exporter:
         image: prom/node-exporter:latest
-        # expose:
-        #     - 9100
+        deploy:
+            resources:
+                limits:
+                    cpus: "0.2"
+                    memory: 100M
+            restart_policy:
+                condition: on-failure
         networks:
             - webnet
 

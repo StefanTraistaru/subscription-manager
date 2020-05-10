@@ -215,19 +215,6 @@ func GetSubscription(w http.ResponseWriter, r *http.Request) {
         }
     }
 
-    // TODO: Query the DB for subscription directly
-    // Testing ---------------------------
-    // var result2 model.Subscription
-    // err = subscriptions.Find(bson.M{"username": username, "subscriptions.name": subscriptionName}).One(&result)
-    // if err != nil {
-    //     log.Println("Error query DB")
-    //     log.Println(err.Error())
-    //     return
-    // }
-    // fmt.Println(result2)
-    // responseJSON(w, result2)
-    // -----------------------------------
-
     responseError(w, "Subscription not found", errors.New("Subscription not found"), http.StatusBadRequest)
 }
 

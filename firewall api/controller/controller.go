@@ -120,7 +120,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
             return
         }
 
-        // TODO: Add token in redis DB
+        // Add token in redis DB
         token := res.Result
         log.Println("Add token in DB")
         log.Println(token)
@@ -206,16 +206,16 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 func CreateSubscription(w http.ResponseWriter, r *http.Request) {
     log.Println("Received request: create subscription")
 
-    // TODO: Check authentication token
+    // Check authentication token
     tokenString := r.Header.Get("Authorization")
     log.Println(tokenString)
     tokenString = strings.Split(tokenString, "Bearer ")[1]
-    ok := true
-    // user, ok := verifyToken(tokenString)
+    user, ok := verifyToken(tokenString)
     if !ok {
         responseError(w, "Token is not valid", nil, http.StatusInternalServerError)
         return
     }
+    log.Println(user)
 
     // Read body
     params := mux.Vars(r)
@@ -254,16 +254,16 @@ func CreateSubscription(w http.ResponseWriter, r *http.Request) {
 func GetSubscriptions(w http.ResponseWriter, r *http.Request) {
     log.Println("Received request: get all subscriptions")
 
-    // TODO: Check authentication token
+    // Check authentication token
     tokenString := r.Header.Get("Authorization")
     log.Println(tokenString)
     tokenString = strings.Split(tokenString, "Bearer ")[1]
-    ok := true
-    // user, ok := verifyToken(tokenString)
+    user, ok := verifyToken(tokenString)
     if !ok {
         responseError(w, "Token is not valid", nil, http.StatusInternalServerError)
         return
     }
+    log.Println(user)
 
     // Read body
     params := mux.Vars(r)
@@ -302,16 +302,16 @@ func GetSubscriptions(w http.ResponseWriter, r *http.Request) {
 func GetSubscription(w http.ResponseWriter, r *http.Request) {
     log.Println("Received request: get one subscription")
 
-    // TODO: Check authentication token
+    // Check authentication token
     tokenString := r.Header.Get("Authorization")
     log.Println(tokenString)
     tokenString = strings.Split(tokenString, "Bearer ")[1]
-    ok := true
-    // user, ok := verifyToken(tokenString)
+    user, ok := verifyToken(tokenString)
     if !ok {
         responseError(w, "Token is not valid", nil, http.StatusInternalServerError)
         return
     }
+    log.Println(user)
 
     // Read body
     params := mux.Vars(r)
@@ -378,7 +378,7 @@ func verifyToken(tokenString string) (model.User, bool){
     var result model.User
 
     token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-        // Don't forget to validate the alg is what you expect:
+        // Validate the algorithm
         if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
             return nil, fmt.Errorf("Unexpected signing method")
         }
@@ -389,18 +389,13 @@ func verifyToken(tokenString string) (model.User, bool){
         return result, false
     }
 
-    log.Println("after parsing")
     // var res model.ResponseResult
     if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
         result.Username = claims["username"].(string)
         result.FirstName = claims["firstname"].(string)
         result.LastName = claims["lastname"].(string)
-        log.Println("here")
-        // json.NewEncoder(w).Encode(result)
         return result, true
     } else {
-        // res.Error = err.Error()
-        log.Println("here2")
         return result, false
     }
 }

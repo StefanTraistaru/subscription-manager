@@ -17,9 +17,6 @@ func main() {
     router.HandleFunc("/subscriptions/{username}", controller.CreateSubscription).Methods("POST")
     router.HandleFunc("/subscriptions/{username}", controller.GetSubscriptions).Methods("GET")
     router.HandleFunc("/subscription/{username}/{subName}", controller.GetSubscription).Methods("GET")
-    // TODO:
-    // router.HandleFunc("/subscription/{username}/{subName}", updateSubscription).Methods("PUT")
-    // router.HandleFunc("/subscription/{username}/{subName}", deleteSubscription).Methods("DELETE")
 
     http.ListenAndServe(":5000", cors.AllowAll().Handler(router))
     log.Println("Listening on port 5000...")

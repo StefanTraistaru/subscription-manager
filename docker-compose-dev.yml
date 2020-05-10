@@ -58,7 +58,7 @@ services:
             - '8081:80'
             - '8082:4200'
         depends_on:
-            - operations-api
+            - firewall-api
         networks:
             - webnet
 

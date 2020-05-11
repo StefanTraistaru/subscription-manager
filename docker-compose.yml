@@ -7,6 +7,8 @@ services:
                 limits:
                     cpus: "0.2"
                     memory: 300M
+            placement:
+                constraints: [node.role == manager]
             restart_policy:
                 condition: on-failure
         ports:
@@ -23,6 +25,8 @@ services:
                 limits:
                     cpus: "0.2"
                     memory: 300M
+            placement:
+                constraints: [node.role == manager]
             restart_policy:
                 condition: on-failure
         ports:
@@ -87,7 +91,7 @@ services:
     web:
         image: stefantraistaru/subscription-manager:web
         deploy:
-            replicas: 1
+            replicas: 2
             resources:
                 limits:
                     cpus: "0.2"
@@ -109,6 +113,8 @@ services:
                 limits:
                     cpus: "0.2"
                     memory: 200M
+            placement:
+                constraints: [node.role == manager]
             restart_policy:
                 condition: on-failure
         ports:
@@ -128,6 +134,8 @@ services:
                 limits:
                     cpus: "0.2"
                     memory: 100M
+            placement:
+                constraints: [node.role == manager]
             restart_policy:
                 condition: on-failure
         ports:
@@ -139,14 +147,23 @@ services:
         networks:
             - webnet
 
-    # visualizer:
-    #     image: dockersamples/visualizer:stable
-    #     ports:
-    #         - '8080:8080'
-    #     volumes:
-    #         - /var/run/docker.sock:/var/run/docker.sock
-    #     networks:
-    #         - webnet
+    visualizer:
+        image: dockersamples/visualizer:stable
+        deploy:
+            resources:
+                limits:
+                    cpus: "0.2"
+                    memory: 100M
+            placement:
+                constraints: [node.role == manager]
+            restart_policy:
+                condition: on-failure
+        ports:
+            - '8083:8080'
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        networks:
+            - webnet
 
     cadvisor:
         image: google/cadvisor:latest
@@ -155,6 +172,8 @@ services:
                 limits:
                     cpus: "0.2"
                     memory: 100M
+            placement:
+                constraints: [node.role == manager]
             restart_policy:
                 condition: on-failure
         volumes:
@@ -174,6 +193,8 @@ services:
                 limits:
                     cpus: "0.2"
                     memory: 100M
+            placement:
+                constraints: [node.role == manager]
             restart_policy:
                 condition: on-failure
         networks:
